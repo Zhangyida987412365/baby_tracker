@@ -55,8 +55,8 @@ jobs:
       - name: Configure Xcode for Manual Signing
         run: |
           echo "Force Manual Code Signing in project.pbxproj"
-          sed -i '' 's/CODE_SIGN_STYLE = Automatic;/CODE_SIGN_STYLE = Manual;/g' ios/Runner.xcodeproj/project.pbxproj
-          sed -i '' 's/PRODUCT_BUNDLE_IDENTIFIER = com.baby.jsx;/PRODUCT_BUNDLE_IDENTIFIER = com.baby.jsx;\n\t\t\t\tDEVELOPMENT_TEAM = AJ7X5R24YH;\n\t\t\t\tPROVISIONING_PROFILE_SPECIFIER = "jsxBaby";\n\t\t\t\tCODE_SIGN_IDENTITY = "Apple Distribution";/g' ios/Runner.xcodeproj/project.pbxproj
+          perl -pi -e 's/CODE_SIGN_STYLE = Automatic;/CODE_SIGN_STYLE = Manual;/g' ios/Runner.xcodeproj/project.pbxproj
+          perl -pi -e 's/PRODUCT_BUNDLE_IDENTIFIER = com.baby.jsx;/PRODUCT_BUNDLE_IDENTIFIER = com.baby.jsx;\n\t\t\t\tDEVELOPMENT_TEAM = AJ7X5R24YH;\n\t\t\t\tPROVISIONING_PROFILE_SPECIFIER = "jsxBaby";\n\t\t\t\tCODE_SIGN_IDENTITY = "Apple Distribution";/g' ios/Runner.xcodeproj/project.pbxproj
 
       - name: Build iOS App (Signed)
         run: flutter build ipa --release --export-method app-store
