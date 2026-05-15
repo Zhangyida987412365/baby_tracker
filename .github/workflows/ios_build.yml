@@ -59,7 +59,30 @@ jobs:
           perl -pi -e 's/PRODUCT_BUNDLE_IDENTIFIER = com.baby.jsx;/PRODUCT_BUNDLE_IDENTIFIER = com.baby.jsx;\n\t\t\t\tDEVELOPMENT_TEAM = AJ7X5R24YH;\n\t\t\t\tPROVISIONING_PROFILE_SPECIFIER = "jsxBaby";\n\t\t\t\tCODE_SIGN_IDENTITY = "Apple Distribution";/g' ios/Runner.xcodeproj/project.pbxproj
 
       - name: Build iOS App (Signed)
-        run: flutter build ipa --release --export-method app-store
+        run: |
+          # 创建 ExportOptions.plist 解决无法导出 ipa 的问题
+          cat <<EOF > ios/ExportOptions.plist
+          <?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+          <plist version="1.0">
+          <dict>
+            <key>method</key>
+            <string>app-store</string>
+            <key>teamID</key>
+            <string>AJ7X5R24YH</string>
+            <key>signingStyle</key>
+            <string>manual</string>
+            <key>provisioningProfiles</key>
+            <dict>
+              <key>com.baby.jsx</key>
+              <string>jsxBaby</string>
+            </dict>
+          </dict>
+          </plist>
+          EOF
+          
+          # 使用明确的导出配置来打包
+          flutter build ipa --release --export-options-plist=ios/ExportOptions.plist
 
       - name: Upload IPA Artifact (备份到 GitHub，以防上传失败)
         uses: actions/upload-artifact@v4
