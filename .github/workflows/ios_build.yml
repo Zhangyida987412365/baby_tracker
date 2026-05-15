@@ -65,7 +65,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: BabyTracker-iOS-Signed
-          path: build/app/outputs/flutter-apk/app.ipa # Flutter 默认的 ipa 输出路径，或者 build/ios/ipa/*.ipa
+          path: "**/*.ipa"
           
       - name: Upload to App Store Connect
         env:
@@ -73,9 +73,14 @@ jobs:
           APP_SPECIFIC_PASSWORD: ${{ secrets.APP_SPECIFIC_PASSWORD }}
         run: |
           echo "开始上传到苹果商店..."
-          # 查找生成的 ipa 文件
-          IPA_FILE=$(find build/ios/ipa -name "*.ipa" | head -n 1)
+          # 全局查找生成的 ipa 文件
+          IPA_FILE=$(find . -name "*.ipa" | grep -v "Pods" | head -n 1)
           echo "找到 IPA 文件: $IPA_FILE"
           
+          if [ -z "$IPA_FILE" ]; then
+            echo "错误：没有找到 .ipa 文件！可能是导出步骤失败了。"
+            exit 1
+          fi
+
           # 苹果规定使用 xcrun altool 工具进行上传
           xcrun altool --upload-app -f "$IPA_FILE" -t ios -u "$APPLE_ID" -p "$APP_SPECIFIC_PASSWORD"
