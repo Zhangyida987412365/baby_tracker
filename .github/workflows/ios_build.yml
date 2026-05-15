@@ -106,5 +106,6 @@ jobs:
           fi
 
           # 彻底抛弃被苹果弃用且带有极其弱智版本检测 Bug 的 altool 工具
-          # 改用苹果目前官方唯一维护的最高级别通道：xcrun iTMSTransporter
-          xcrun iTMSTransporter -m upload -assetFile "$IPA_FILE" -u "$APPLE_ID" -p "$APP_SPECIFIC_PASSWORD" -v eXtreme
+          # 同样抛弃路径不稳定的 iTMSTransporter
+          # 改用全球最流行的自动化神器 Fastlane（GitHub 云端已自带）来进行极其稳定的上传
+          env FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD="$APP_SPECIFIC_PASSWORD" fastlane run upload_to_testflight ipa:"$IPA_FILE" username:"$APPLE_ID" app_identifier:"com.baby.jsx" skip_waiting_for_build_processing:true
