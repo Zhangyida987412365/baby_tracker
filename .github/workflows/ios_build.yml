@@ -105,7 +105,8 @@ jobs:
             exit 1
           fi
 
-          # 彻底抛弃被苹果弃用且带有极其弱智版本检测 Bug 的 altool 工具
-          # 同样抛弃路径不稳定的 iTMSTransporter
-          # 改用全球最流行的自动化神器 Fastlane（GitHub 云端已自带）来进行极其稳定的上传
-          env FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD="$APP_SPECIFIC_PASSWORD" fastlane run upload_to_testflight ipa:"$IPA_FILE" username:"$APPLE_ID" app_identifier:"com.baby.jsx" skip_waiting_for_build_processing:true
+          # Fastlane 需要完整账号密码（会触发双重认证），所以放弃。
+          # 回归 iTMSTransporter，但这次不依赖系统可能会损坏的 xcrun 快捷方式，而是直接找出它的真实物理路径进行暴击！
+          TRANSPORTER_PATH=$(find /Applications/Xcode*.app -name "iTMSTransporter" -type f | head -n 1)
+          echo "找到隐藏的武器库路径: $TRANSPORTER_PATH"
+          "$TRANSPORTER_PATH" -m upload -assetFile "$IPA_FILE" -u "$APPLE_ID" -p "$APP_SPECIFIC_PASSWORD" -v eXtreme
