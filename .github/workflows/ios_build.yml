@@ -105,5 +105,6 @@ jobs:
             exit 1
           fi
 
-          # 苹果规定使用 xcrun altool 工具进行上传
-          xcrun altool --upload-app -f "$IPA_FILE" -t ios -u "$APPLE_ID" -p "$APP_SPECIFIC_PASSWORD"
+          # 彻底抛弃被苹果弃用且带有极其弱智版本检测 Bug 的 altool 工具
+          # 改用苹果目前官方唯一维护的最高级别通道：xcrun iTMSTransporter
+          xcrun iTMSTransporter -m upload -assetFile "$IPA_FILE" -u "$APPLE_ID" -p "$APP_SPECIFIC_PASSWORD" -v eXtreme
