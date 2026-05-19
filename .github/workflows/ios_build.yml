@@ -105,12 +105,6 @@ jobs:
             exit 1
           fi
 
-          # Fastlane 需要完整账号密码（会触发双重认证），所以放弃。
-          # 回归 iTMSTransporter。使用相对查找，确保能抓到这个执行文件。
-          TRANSPORTER_PATH=$(find "$(xcode-select -p)/../" -name "iTMSTransporter" | grep "bin/iTMSTransporter" | head -n 1 || true)
-          echo "找到隐藏的武器库路径: $TRANSPORTER_PATH"
-          if [ -z "$TRANSPORTER_PATH" ]; then
-            echo "彻底找不到 iTMSTransporter，苹果太坑了"
-            exit 1
-          fi
-          "$TRANSPORTER_PATH" -m upload -assetFile "$IPA_FILE" -u "$APPLE_ID" -p "$APP_SPECIFIC_PASSWORD" -v eXtreme
+          # 使用 xcrun altool 进行上传（目前最稳定且支持专用密码的方式）
+          echo "使用 xcrun altool 上传 IPA..."
+          xcrun altool --upload-app -f "$IPA_FILE" -t ios -u "$APPLE_ID" -p "$APP_SPECIFIC_PASSWORD"
