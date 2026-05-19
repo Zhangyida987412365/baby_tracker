@@ -43,3 +43,8 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# Certificates and Secrets
+*.p12
+*.mobileprovision
+*_BASE64.txt
